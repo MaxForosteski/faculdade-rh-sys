@@ -8,11 +8,18 @@ Sistema de Gestão Empresarial em uma empresa de tecnologia, ajudando a gerir re
 
 requesitos funcionais:
 --TI:
+
+
+
 -criação de usuario
+
+
 -inativação de usuarios
--permição de acesso de usuarios
--edição de dados dos usuarios
--controle de usuarios
+
+
+-permição de acesso de usuarios  
+-edição de dados dos usuarios  
+-controle de usuarios  
 
 --RH:
 -cadastro de funcionarios
