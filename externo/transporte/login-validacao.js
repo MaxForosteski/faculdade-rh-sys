@@ -4,7 +4,7 @@ document.getElementById("login").addEventListener("submit", () => {
     let formData = new FormData(this);
     let xhr = new XMLHttpRequest();
 
-    xhr.open("POST","../../server/validation/validacao-login.php", true);
+    xhr.open("POST","../../interno/apresentacao/validacao-login.php", true);
     xhr.onload = () => {
         let response = xhr.responseText;
         console.log(response);
