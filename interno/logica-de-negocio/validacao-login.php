@@ -1,11 +1,26 @@
 <?php
 
-function ValidacaoLogin($nome,$senha){
+
+
+function ValidacaoLogin($Rlogin,$Rsenha){
+    session_start();
+
     include("conexao-banco-de-dados.php");
 
-    $sql = "SELECT NOME,SENHA FROM usuarios WHERE NOME = '$nome' AND SENHA = '$senha'";
+    $login = isset($Rlogin) ? addslashes(trim($Rlogin)) : false;
+    $senha = isset($Rsenha) ? md5(trim($Rsenha)) : false;
 
-    $res = mysqli->query($sql);
+    if(!$login || !$senha){
+        $status_transaction = array(
+            "isSuccess" => false,
+            "message" => "Digite seu nome e senha!"
+        );
+        
+        return (object)$status_transaction;
+    }
+
+        $sql = "SELECT * FROM usuarios WHERE nome = $login ";
+        $result_id = $mysql->query($sql);
 
 }
 
