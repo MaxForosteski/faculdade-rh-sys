@@ -4,7 +4,7 @@ function CreateUsuario($nome,$sobrenome,$senha,$isRH,$IsEstoque,$IsAdmin,$IsRoot
     include("../database/conexao-banco-de-dados.php");
     $new_senha = md5($senha);
     if(isset($nome,$sobrenome,$new_senha,$isRH,$IsEstoque,$IsAdmin,$IsRoot,$DataCriacao)){
-        $sql = "INSERT INTO usuarios (NOME,SOBRENOME,SENHA,ISRH,ISESTOQUE,ISADMIN,ISROOT,DATEDECRIACAO) VALUES (?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO usuarios (NOME,SOBRENOME,SENHA,ISRH,ISESTOQUE,ISADMIN,ISROOT,ATIVO,DATEDECRIACAO) VALUES (?,?,?,?,?,?,?,1,?)";
 
         $stmt = $conn->prepare($sql);
         $stmt = $conn->bind_params("sssiiiis",$nome,$sobrenome,$senha,$isRH,$IsEstoque,$IsAdmin,$IsRoot,$DataCriacao);
@@ -43,10 +43,45 @@ function UpdateUsuario($id,$nome,$sobrenome,$senha,$isRH,$IsEstoque,$IsAdmin,$Is
     include("../database/conexao-banco-de-dados.php");
     $new_senha = md5($senha);
     if(isset($id,$nome,$sobrenome,$new_senha,$isRH,$IsEstoque,$IsAdmin,$IsRoot,$DataCriacao)){
-        $sql = "UPDATE usuarios SET NOME=? , SOBRENOME =?, SENHA=?, ISRH=?, ISESTOQUE=?, ISADMIN=?, ISROOT=?, DATEDECRIACAO=? WHERE ID = ?";
+        $sql = "UPDATE usuarios SET NOME=? , SOBRENOME =?, SENHA=?, ISRH=?, ISESTOQUE=?, ISADMIN=?, ISROOT=?, ATIVO=1 DATEDECRIACAO=? WHERE ID = ?";
 
         $stmt = $conn->prepare($sql);
         $stmt = $conn->bind_params("sssiiiisi",$nome,$sobrenome,$senha,$isRH,$IsEstoque,$IsAdmin,$IsRoot,$DataCriacao,$id);
+        
+        if($stmt->execute()){
+            $response = array(
+                "IsSuccess" => true,
+                "Message" => null 
+            );
+            return (object)$response;
+        }else{
+            $response = array(
+                "IsSuccess" => false,
+                "Message" => "$conn->error"
+            );
+
+            return (object)$response;
+        }
+
+    }else{
+        $response = array(
+            "IsSuccess" => false,
+            "Message" => "$conn->error"
+        );
+        return (object)$response;
+    }
+    $stmt->close();
+    $conn->close();
+}
+
+#Editar um registro na tabela de usuario. Output:IsSuccess,Message
+function InactiveUsuario($id,$ativo){
+    include("../database/conexao-banco-de-dados.php");
+    if(isset($id,$ativo)){
+        $sql = "UPDATE usuarios SET ATIVO= ? WHERE ID = ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt = $conn->bind_params("ii",$ativo,$id);
         
         if($stmt->execute()){
             $response = array(
