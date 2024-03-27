@@ -5,7 +5,7 @@
 function ValidacaoLogin($Rlogin,$Rsenha){
     session_start();
 
-    include("conexao-banco-de-dados.php");
+    include("../database/conexao-banco-de-dados.php");
 
     $login = isset($Rlogin) ? addslashes(trim($Rlogin)) : false;
     $senha = isset($Rsenha) ? md5(trim($Rsenha)) : false;
