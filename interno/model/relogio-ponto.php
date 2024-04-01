@@ -1,16 +1,15 @@
 <?php
-/*Criar um registro na tabela de usuario. Output:Novo_Id,IsSuccess,Message*/
-function CreateUsuario($nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao) {
+/*Criar um registro na tabela de relogioponto. Output:Novo_Id,IsSuccess,Message*/
+function CreateRelogioPonto($horario,$data,$funcionarioID){
     include("../database/conexao-banco-de-dados.php");
-    $new_senha = md5($senha);
-    if(isset($nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao)) {
-        $sql = "INSERT INTO usuarios (NOME, SOBRENOME, SENHA, ISRH, ISESTOQUE, ISADMIN, ISROOT, ATIVO, DATEDECRIACAO) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)";
+    if(isset($horario,$data,$funcionarioID)){
+        $sql = "INSERT INTO relogioponto (HORARIO,DATA,FUNCIONARIOID,ATIVO) VALUES (?,?,?,1,?)";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiiiis", $nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao);
+        $stmt->bind_param("ssi",$horario,$data,$funcionarioID);
         
-        if($stmt->execute()) {
-            $novo_id = $conn->insert_id;
+        if($stmt->execute()){
+            $novo_id = $stmt->insert_id;
             $response = array(
                 "Novo_Id" => $novo_id,
                 "IsSuccess" => true,
@@ -19,7 +18,7 @@ function CreateUsuario($nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdmin, $
             $stmt->close();
             $conn->close();
             return (object)$response;
-        } else {
+        }else{
             $response = array(
                 "Novo_Id" => null,
                 "IsSuccess" => false,
@@ -29,7 +28,7 @@ function CreateUsuario($nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdmin, $
             $conn->close();
             return (object)$response;
         }
-    } else {
+    }else{
         $response = array(
             "Novo_Id" => null,
             "IsSuccess" => false,
@@ -40,15 +39,15 @@ function CreateUsuario($nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdmin, $
     }
 }
 
-#Editar um registro na tabela de usuario. Output:IsSuccess,Message
-function UpdateUsuario($id, $nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao) {
+#Editar um registro na tabela de relogio-ponto. Output:IsSuccess,Message
+function UpdateRelogioPonto($id,$horario,$data,$funcionarioID) {
     include("../database/conexao-banco-de-dados.php");
-    $new_senha = md5($senha);
-    if(isset($id, $nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao)) {
-        $sql = "UPDATE usuarios SET NOME=?, SOBRENOME=?, SENHA=?, ISRH=?, ISESTOQUE=?, ISADMIN=?, ISROOT=?, ATIVO=1, DATEDECRIACAO=? WHERE ID = ?";
+    
+    if(isset($id, $horario,$data,$funcionarioID)) {
+        $sql = "UPDATE relogioponto SET HORARIO=?, DATA=?, FUNCIONARIOID=?, ATIVO=1 WHERE ID = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiiiisi", $nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao, $id);
+        $stmt->bind_param("ssii", $horario,$data,$funcionarioID, $id);
         
         if($stmt->execute()) {
             $response = array(
@@ -77,19 +76,21 @@ function UpdateUsuario($id, $nome, $sobrenome, $senha, $isRH, $IsEstoque, $IsAdm
     }
 }
 
-#Editar um registro na tabela de usuario. Output:IsSuccess,Message
-function InactiveUsuario($id) {
+
+#Editar um registro na tabela de relogioponto. Output:IsSuccess,Message
+function InactiveRelogioPonto($id) {
     include("../database/conexao-banco-de-dados.php");
+    
     if(isset($id)) {
-        $sql = "UPDATE usuarios SET ATIVO = 0 WHERE ID = ?";
+        $sql = "UPDATE relogioponto SET ATIVO = 0 WHERE ID = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i",$id);
+        $stmt->bind_param("i", $id);
         
         if($stmt->execute()) {
             $response = array(
                 "IsSuccess" => true,
-                "Message" => null 
+                "Message" => null
             );
             $stmt->close();
             $conn->close();
@@ -103,7 +104,6 @@ function InactiveUsuario($id) {
             $conn->close();
             return (object)$response;
         }
-
     } else {
         $response = array(
             "IsSuccess" => false,

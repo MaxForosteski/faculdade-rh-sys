@@ -1,110 +1,117 @@
 <?php
-/*Criar um registro na tabela de usuario. Output:Novo_Id,IsSuccess,Message*/
+/*Criar um registro na tabela de funcionario. Output:Novo_Id,IsSuccess,Message*/
 function CreateFuncionario($nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao){
     include("../database/conexao-banco-de-dados.php");
     if(isset($nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao)){
         $sql = "INSERT INTO funcionarios (NOME,SOBRENOME,DATADENASCIMENTO,CARGO,SETORID,CPF,SALARIO,ATIVO,DATEDECRIACAO) VALUES (?,?,?,?,?,?,?,1,?)";
 
         $stmt = $conn->prepare($sql);
-        $stmt = $conn->bind_params("ssssiids",$nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao);
+        $stmt->bind_param("ssssisds",$nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao);
         
         if($stmt->execute()){
-            $novo_id = $conn->insert_id;
+            $novo_id = $stmt->insert_id;
             $response = array(
                 "Novo_Id" => $novo_id,
                 "IsSuccess" => true,
                 "Message" => null 
             );
+            $stmt->close();
+            $conn->close();
             return (object)$response;
         }else{
             $response = array(
                 "Novo_Id" => null,
                 "IsSuccess" => false,
-                "Message" => "$conn->error"
+                "Message" => $stmt->error
             );
-
+            $stmt->close();
+            $conn->close();
             return (object)$response;
         }
-
     }else{
         $response = array(
-            "Novo_id" => null,
+            "Novo_Id" => null,
             "IsSuccess" => false,
-            "Message" => "$conn->error"
+            "Message" => "Missing parameters"
         );
+        $conn->close();
         return (object)$response;
     }
-    $stmt->close();
-    $conn->close();
-}
-#Editar um registro na tabela de usuario. Output:IsSuccess,Message
-function UpdateFuncionario($id,$nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao){
-    include("../database/conexao-banco-de-dados.php");
-    if(isset($nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao)){
-        $sql = "UPDATE funcionarios SET NOME=? , SOBRENOME =?, DATADENASCIMENTO=?, CARGO=?, SETORID=?, CPF=?, SALARIO=?, ATIVO=1 DATEDECRIACAO=? WHERE ID = ?";
-
-        $stmt = $conn->prepare($sql);
-        $stmt = $conn->bind_params("ssssiidsi",$nome,$sobrenome,$datadenascimento,$cargo,$setorid,$cpf,$salario,$DataCriacao,$id);
-        
-        if($stmt->execute()){
-            $response = array(
-                "IsSuccess" => true,
-                "Message" => null 
-            );
-            return (object)$response;
-        }else{
-            $response = array(
-                "IsSuccess" => false,
-                "Message" => "$conn->error"
-            );
-
-            return (object)$response;
-        }
-
-    }else{
-        $response = array(
-            "IsSuccess" => false,
-            "Message" => "$conn->error"
-        );
-        return (object)$response;
-    }
-    $stmt->close();
-    $conn->close();
 }
 
-#Editar um registro na tabela de usuario. Output:IsSuccess,Message
-function InactiveFuncionario($id,$ativo){
+#Editar um registro na tabela de funcionario. Output:IsSuccess,Message
+function UpdateFuncionario($id, $nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $salario, $DataCriacao) {
     include("../database/conexao-banco-de-dados.php");
-    if(isset($id,$ativo)){
-        $sql = "UPDATE usuarios SET ATIVO= ? WHERE ID = ?";
-
-        $stmt = $conn->prepare($sql);
-        $stmt = $conn->bind_params("ii",$ativo,$id);
+    
+    if(isset($id,$nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $salario, $DataCriacao)) {
+        $sql = "UPDATE funcionarios SET NOME=?, SOBRENOME=?, DATADENASCIMENTO=?, CARGO=?, SETORID=?, CPF=?, SALARIO=?, ATIVO=1, DATEDECRIACAO=? WHERE ID = ?";
         
-        if($stmt->execute()){
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssisdsi", $nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $salario, $DataCriacao, $id);
+        
+        if($stmt->execute()) {
             $response = array(
                 "IsSuccess" => true,
-                "Message" => null 
+                "Message" => null
             );
+            $stmt->close();
+            $conn->close();
             return (object)$response;
-        }else{
+        } else {
             $response = array(
                 "IsSuccess" => false,
-                "Message" => "$conn->error"
+                "Message" => $stmt->error
             );
-
+            $stmt->close();
+            $conn->close();
             return (object)$response;
         }
-
-    }else{
+    } else {
         $response = array(
             "IsSuccess" => false,
-            "Message" => "$conn->error"
+            "Message" => "Missing parameters"
         );
+        $conn->close();
         return (object)$response;
     }
-    $stmt->close();
-    $conn->close();
+}
+
+
+#Editar um registro na tabela de funcionario. Output:IsSuccess,Message
+function InactiveFuncionario($id) {
+    include("../database/conexao-banco-de-dados.php");
+    
+    if(isset($id)) {
+        $sql = "UPDATE funcionarios SET ATIVO = 0 WHERE ID = ?";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        
+        if($stmt->execute()) {
+            $response = array(
+                "IsSuccess" => true,
+                "Message" => null
+            );
+            $stmt->close();
+            $conn->close();
+            return (object)$response;
+        } else {
+            $response = array(
+                "IsSuccess" => false,
+                "Message" => $stmt->error
+            );
+            $stmt->close();
+            $conn->close();
+            return (object)$response;
+        }
+    } else {
+        $response = array(
+            "IsSuccess" => false,
+            "Message" => "Missing parameters"
+        );
+        $conn->close();
+        return (object)$response;
+    }
 }
 
 ?>

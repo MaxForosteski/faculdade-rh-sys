@@ -64,7 +64,7 @@ CREATE TABLE `produtos` (
 -- Estrutura para tabela `relogio-ponto`
 --
 
-CREATE TABLE `relogio-ponto` (
+CREATE TABLE `relogioponto` (
   `ID` int(11) NOT NULL,
   `HORARIO` time NOT NULL,
   `DATA` date NOT NULL,
@@ -111,7 +111,7 @@ ALTER TABLE `produtos`
 --
 -- Índices de tabela `relogio-ponto`
 --
-ALTER TABLE `relogio-ponto`
+ALTER TABLE `relogioponto`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -139,7 +139,7 @@ ALTER TABLE `produtos`
 --
 -- AUTO_INCREMENT de tabela `relogio-ponto`
 --
-ALTER TABLE `relogio-ponto`
+ALTER TABLE `relogioponto`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
