@@ -1,33 +1,35 @@
 <?php
-#Editar um registro na tabela de funcionario. Output:IsSuccess,Message
-$id = $_POST['id'];
+
 $nome = $_POST['nome'];
 $sobrenome = $_POST['sobrenome'];
-$datadenascimento = $_POST['datadenascimento'];
-$cargo = $_POST['cargo'];
-$setorid = $_POST['setorid'];
-$cpf = $_POST['cpf'];
-$salario = $_POST['salario'];
+$senha = $_POST['senha'];
+$isRH = $_POST['isrh'];
+$IsEstoque = $_POST['isestoque'];
+$IsAdmin = $_POST['isadmin'];
+$IsRoot = $_POST['isroot'];
 $DataCriacao = $_POST['datacriacao'];
 
 include("../database/conexao-banco-de-dados.php");
+$new_senha = md5($senha);
+if(isset($nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao)) {
+    $sql = "INSERT INTO usuarios (NOME, SOBRENOME, SENHA, ISRH, ISESTOQUE, ISADMIN, ISROOT, ATIVO, DATEDECRIACAO) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)";
 
-if(isset($id,$nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $salario, $DataCriacao)) {
-    $sql = "UPDATE funcionarios SET NOME=?, SOBRENOME=?, DATADENASCIMENTO=?, CARGO=?, SETORID=?, CPF=?, SALARIO=?, ATIVO=1, DATEDECRIACAO=? WHERE ID = ?";
-    
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssisdsi", $nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $salario, $DataCriacao, $id);
+    $stmt->bind_param("sssiiiis", $nome, $sobrenome, $new_senha, $isRH, $IsEstoque, $IsAdmin, $IsRoot, $DataCriacao);
     
     if($stmt->execute()) {
+        $novo_id = $conn->insert_id;
         $response = array(
+            "Novo_Id" => $novo_id,
             "IsSuccess" => true,
-            "Message" => null
+            "Message" => null 
         );
         $stmt->close();
         $conn->close();
         return (object)$response;
     } else {
         $response = array(
+            "Novo_Id" => null,
             "IsSuccess" => false,
             "Message" => $stmt->error
         );
@@ -37,12 +39,12 @@ if(isset($id,$nome, $sobrenome, $datadenascimento, $cargo, $setorid, $cpf, $sala
     }
 } else {
     $response = array(
+        "Novo_Id" => null,
         "IsSuccess" => false,
         "Message" => "Missing parameters"
     );
     $conn->close();
     return (object)$response;
 }
-
 
 ?>

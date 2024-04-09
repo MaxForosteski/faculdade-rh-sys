@@ -1,26 +1,30 @@
 <?php
-#Editar um registro na tabela de produtos. Output:IsSuccess,Message
+/*Criar um registro na tabela de relogioponto. Output:Novo_Id,IsSuccess,Message*/
 
-$id = $_POST['id'];
+$horario = $_POST['horario'];
+$data = $_POST['data'];
+$funcionarioID = $_POST['funcionarioID'];
 
 include("../database/conexao-banco-de-dados.php");
+if(isset($horario,$data,$funcionarioID)){
+    $sql = "INSERT INTO relogioponto (HORARIO,DATA,FUNCIONARIOID,ATIVO) VALUES (?,?,?,1,?)";
 
-if(isset($id)) {
-    $sql = "UPDATE produtos SET ATIVO = 0 WHERE ID = ?";
-    
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("ssi",$horario,$data,$funcionarioID);
     
-    if($stmt->execute()) {
+    if($stmt->execute()){
+        $novo_id = $stmt->insert_id;
         $response = array(
+            "Novo_Id" => $novo_id,
             "IsSuccess" => true,
-            "Message" => null
+            "Message" => null 
         );
         $stmt->close();
         $conn->close();
         return (object)$response;
-    } else {
+    }else{
         $response = array(
+            "Novo_Id" => null,
             "IsSuccess" => false,
             "Message" => $stmt->error
         );
@@ -28,8 +32,9 @@ if(isset($id)) {
         $conn->close();
         return (object)$response;
     }
-} else {
+}else{
     $response = array(
+        "Novo_Id" => null,
         "IsSuccess" => false,
         "Message" => "Missing parameters"
     );

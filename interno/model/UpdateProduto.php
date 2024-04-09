@@ -2,41 +2,46 @@
 
 
 #Editar um registro na tabela de produtos. Output:IsSuccess,Message
-function UpdateProduto($id,$nome,$marca,$estoque,$DataCriacao) {
-    include("../database/conexao-banco-de-dados.php");
+
+$id = $_POST['id'];
+$nome = $_POST['nome'];
+$marca = $_POST['marca'];
+$estoque = $_POST['estoque'];
+$DataCriacao = $_POST['datacriacao'];
+include("../database/conexao-banco-de-dados.php");
+
+if(isset($id, $nome,$marca,$estoque,$DataCriacao)) {
+    $sql = "UPDATE produtos SET NOME=?, MARCA=?, ESTOQUE=?, ATIVO=1, DATEDECRIACAO=? WHERE ID = ?";
     
-    if(isset($id, $nome,$marca,$estoque,$DataCriacao)) {
-        $sql = "UPDATE produtos SET NOME=?, MARCA=?, ESTOQUE=?, ATIVO=1, DATEDECRIACAO=? WHERE ID = ?";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssisi", $nome,$marca,$estoque, $DataCriacao, $id);
-        
-        if($stmt->execute()) {
-            $response = array(
-                "IsSuccess" => true,
-                "Message" => null
-            );
-            $stmt->close();
-            $conn->close();
-            return (object)$response;
-        } else {
-            $response = array(
-                "IsSuccess" => false,
-                "Message" => $stmt->error
-            );
-            $stmt->close();
-            $conn->close();
-            return (object)$response;
-        }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssisi", $nome,$marca,$estoque, $DataCriacao, $id);
+    
+    if($stmt->execute()) {
+        $response = array(
+            "IsSuccess" => true,
+            "Message" => null
+        );
+        $stmt->close();
+        $conn->close();
+        return (object)$response;
     } else {
         $response = array(
             "IsSuccess" => false,
-            "Message" => "Missing parameters"
+            "Message" => $stmt->error
         );
+        $stmt->close();
         $conn->close();
         return (object)$response;
     }
+} else {
+    $response = array(
+        "IsSuccess" => false,
+        "Message" => "Missing parameters"
+    );
+    $conn->close();
+    return (object)$response;
 }
+
 
 
 

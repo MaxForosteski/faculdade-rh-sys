@@ -1,20 +1,19 @@
 <?php
-#Editar um registro na tabela de produtos. Output:IsSuccess,Message
+#Editar um registro na tabela de usuario. Output:IsSuccess,Message
 
 $id = $_POST['id'];
 
 include("../database/conexao-banco-de-dados.php");
-
 if(isset($id)) {
-    $sql = "UPDATE produtos SET ATIVO = 0 WHERE ID = ?";
+    $sql = "UPDATE usuarios SET ATIVO = 0 WHERE ID = ?";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i",$id);
     
     if($stmt->execute()) {
         $response = array(
             "IsSuccess" => true,
-            "Message" => null
+            "Message" => null 
         );
         $stmt->close();
         $conn->close();
@@ -28,6 +27,7 @@ if(isset($id)) {
         $conn->close();
         return (object)$response;
     }
+
 } else {
     $response = array(
         "IsSuccess" => false,
@@ -36,5 +36,6 @@ if(isset($id)) {
     $conn->close();
     return (object)$response;
 }
+
 
 ?>

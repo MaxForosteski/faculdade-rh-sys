@@ -1,12 +1,10 @@
 <?php
-#Editar um registro na tabela de produtos. Output:IsSuccess,Message
-
+#Editar um registro na tabela de relogioponto. Output:IsSuccess,Message
 $id = $_POST['id'];
-
 include("../database/conexao-banco-de-dados.php");
 
 if(isset($id)) {
-    $sql = "UPDATE produtos SET ATIVO = 0 WHERE ID = ?";
+    $sql = "UPDATE relogioponto SET ATIVO = 0 WHERE ID = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
