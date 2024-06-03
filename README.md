@@ -1,3 +1,4 @@
+**** PROJETO PAUSADO POR MOTIVOS INSTITUCIONAIS ****
 # faculdade-rh-sys
 Alunos: Marcos Max, Leonardo Pinzegher, Joyce Magno, Maria Eduarda.  
 
